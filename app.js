@@ -74,6 +74,8 @@ app.get('/', (request, response) => {
     <li><a href="/bake?baked_good=cookies&count=10">Bake 10 cookies</a></li>
     <li><a href="/bake?baked_good=loaves+of+bread&count=5">Bake 5 loaves of bread</a> — notice how we represent spaces in the URL.</li>
     <li><a href="/bake?baked_good=cupcakes&count=1138">Bake 1138 cupcakes</a></li>
+    <li><a href="greet?stranger_name=Jesse+">Say hey to a stranger</a></li>
+    <li><a href="/zoo?animal_name=lion+&count=7">Spot animals at the zoo!</a></li>
     </ul>
   `;
 
@@ -115,6 +117,71 @@ app.get('/waffles/custom', (request, response) => {
   response.send(getLayoutHTML(content));
 });
 
+app.get('/zoo', (request, response) => {
+  let animalName = request.query.animal_name;
+  let count = Number.parseInt(request.query.count);
+  let content = `
+
+  <h1>Welcome to the Grand Zoo! Guaranteed to have hundreds of all your favorite animals!</h1>
+  <p>
+  <a href='/'>Back to the homepage</a>
+  </p>
+  <p>
+  See if you can spot your favorite animals!
+  </p>
+  <form method="GET" action="/zoo">
+      <div class="form-section">
+        <label for="animal_name">Animal:</label>
+        <input type="text" name="animal_name" id="animal_name" required>
+      </div>
+      <div class="form-section">
+        <label for="count">Number of animals:</label>
+        <input type="number" name="count" id="count" required>
+      </div>
+      <div class="form-section">
+      <input type="submit" value="Look!">
+    </div>
+    </form>
+    <h2> There's the ${capitalize(animalName)}(s)</h2>
+    <p>
+    Look! There's ${count} of them.
+    </p>
+`;
+  content += '<ul>';
+
+  for (let i = 1; i <= count; i++) {
+    content += `<li>${animalName} number ${i}</li>`;
+  }
+
+  content += '</ul>';
+  response.send(getLayoutHTML(content));
+});
+
+app.get('/greet', (request, response) => {
+  let strangerName = request.query.stranger_name;
+  let content = `
+  <h1>Season's Greetings ${capitalize(strangerName)}!</h1>
+  <p>
+      <a href='/'>Back to the homepage</a>
+    </p>
+    <p>
+    Change the name and meet someone new!
+    </p>
+    <form method="GET" action="/greet">
+      <div class="form-section">
+        <label for="stranger_name">New Person's Name:</label>
+        <input type="text" name="stranger_name" id="stranger_name" required>
+      </div>
+      <div class="form-section">
+      <input type="submit" value="Say Hello!">
+    </div>
+    </form>
+
+
+  `;
+  response.send(getLayoutHTML(content));
+});
+
 // Visit, e.g., /bake?baked_good=waffles&count=20
 app.get('/bake', (request, response) => {
   let count = Number.parseInt(request.query.count);
@@ -149,7 +216,7 @@ app.get('/bake', (request, response) => {
 
   content += '<ul>';
 
-  for(let i = 1; i <= count; i++) {
+  for (let i = 1; i <= count; i++) {
     content += `<li>${bakedGood} number ${i}</li>`;
   }
 
